@@ -5,45 +5,62 @@ import { Planet } from 'react-planet';
 import Container from '../shared/Base';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
-import { Button } from '@mui/material';
+import { Button, Typography } from '@mui/material';
+import axios from 'axios';
+
+const CssTextField = styled(TextField)({
+  '& label.Mui-focused': {
+    color: 'white',
+  },
+  '& .MuiTextField-root': {
+    width: '100%',
+  },
+  '& label': {
+    color: 'white',
+  },
+  '& input': {
+    color: 'white',
+  },
+  '& .MuiInput-underline:after': {
+    borderBottomColor: 'white',
+  },
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderColor: '#289FED',
+    },
+    '&:hover fieldset': {
+      borderColor: 'white',
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: 'white',
+    },
+  },
+});
 
 const Login = (props) => {
-  const CssTextField = styled(TextField)({
-    '& label.Mui-focused': {
-      color: 'white',
-    },
-    '& .MuiTextField-root': {
-      width: '100%',
-    },
-    '& label': {
-      color: 'white',
-    },
-    '& input': {
-      color: 'white',
-    },
-    '& .MuiInput-underline:after': {
-      borderBottomColor: 'white',
-    },
-    '& .MuiOutlinedInput-root': {
-      '& fieldset': {
-        borderColor: '#289FED',
-      },
-      '&:hover fieldset': {
-        borderColor: 'white',
-      },
-      '&.Mui-focused fieldset': {
-        borderColor: 'white',
-      },
-    },
-  });
+  const [email, setEmail] = React.useState('');
+
+  const login = () => {
+    axios.post(`${process.env.REACT_APP_BACK_URL}api/user/login`, {
+      email,
+    })
+    .then((response) => {
+      const data = response.data;
+      if (data.login) {
+        localStorage.setItem('user', JSON.stringify(data.user));
+        window.location.href = '/update';
+      }
+    })
+  }
 
   return(
     <Container
       display='flex'
+      modal={2}
     >
       <Box
         display=''
-        height='400px'
+        height='350px'
         width='350px'
         sx={{
           backgroundColor: '#080721',
@@ -62,7 +79,7 @@ const Login = (props) => {
             item
             xs={2}
             sx={{
-              marginBottom: 25
+              marginBottom: 20
             }}
             alignContent='center'
           >
@@ -110,17 +127,16 @@ const Login = (props) => {
           <Grid
             item
             xs={12}
-            mb={12}
             sx={{
-              marginBottom: 3
+              marginBottom: 5
             }}
           >
-            <CssTextField
-              variant='outlined'
-              size='small'
-              label='Correo'
+            <Typography
+             color='white'
+             variant='h5'
             >
-            </CssTextField>
+              Iniciar sesión
+            </Typography>
           </Grid>
           <Grid
             item
@@ -133,14 +149,17 @@ const Login = (props) => {
             <CssTextField
               variant='outlined'
               size='small'
-              type='password'
-              label='Contraseña'
+              label='Ingresa tu correo'
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
             >
             </CssTextField>
           </Grid>
           <Grid item xs={12}>
-            <Button variant="contained">
-              Iniciar sesión
+            <Button variant="contained" onClick={login}>
+              Entrar
             </Button>
           </Grid>
         </Grid>

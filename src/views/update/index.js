@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import { Planet } from 'react-planet';
@@ -23,6 +23,11 @@ const CssTextField = styled(TextField)({
   '& input': {
     color: 'white',
   },
+  '& .Mui-disabled': {
+    '& input': {
+      color: 'white'
+    }
+  },
   '& .MuiInput-underline:after': {
     borderBottomColor: 'white',
   },
@@ -39,7 +44,7 @@ const CssTextField = styled(TextField)({
   },
 });
 
-const Register = (props) => {
+const Update = () => {
   const [email, setEmail] = React.useState('');
   const [age, setAge] = React.useState('');
   const [name, setName] = React.useState('');
@@ -52,8 +57,8 @@ const Register = (props) => {
     },
   });
 
-  const createUser = () => {
-    axios.post(`${process.env.REACT_APP_BACK_URL}api/user`, {
+  const updateUser = () => {
+    axios.put(`${process.env.REACT_APP_BACK_URL}api/user`, {
       name,
       age,
       email
@@ -61,14 +66,22 @@ const Register = (props) => {
       const user = response.data;
       if (user) {
         localStorage.setItem('user', JSON.stringify(user));
-        window.location.href = '/update';
       }
     })
-  }
+  };
+
+  useEffect(() => {
+    if (localStorage.getItem('user')) {
+      const user = JSON.parse(localStorage.getItem('user'));
+      setEmail(user.email);
+      setName(user.name);
+      setAge(user.age);
+    }
+  }, [])
 
   return(
     <Container
-      modal={1}
+      modal={3}
       display='flex'
     >
       <Box
@@ -145,7 +158,7 @@ const Register = (props) => {
             }}
           >
             <Typography variant='h5' letterSpacing='0.1em' color={theme.palette.text.light} align='center'>
-              Registrate
+              Perfil
             </Typography>
           </Grid>
           <Grid
@@ -159,8 +172,8 @@ const Register = (props) => {
             <CssTextField
               variant='outlined'
               size='small'
-              label='Ingresa tu nombre'
-              value={name}
+              label='Nombre'
+              value={name || ''}
               onChange={(e) => {
                 setName(e.target.value);
               }}
@@ -178,8 +191,9 @@ const Register = (props) => {
             <CssTextField
               variant='outlined'
               size='small'
-              label='Ingresa tu correo'
-              value={email}
+              disabled
+              label='Correo'
+              value={email || ''}
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
@@ -197,8 +211,8 @@ const Register = (props) => {
             <CssTextField
               variant='outlined'
               size='small'
-              label='Ingresa tu edad'
-              value={age}
+              label='Edad'
+              value={age || ''}
               onChange={(e) => {
                 setAge(e.target.value);
               }}
@@ -206,8 +220,8 @@ const Register = (props) => {
             </CssTextField>
           </Grid>
           <Grid item xs={12}>
-            <Button variant="contained" onClick={createUser}>
-              Enviar
+            <Button variant="contained" onClick={updateUser}>
+              Actualizar
             </Button>
           </Grid>
 
@@ -217,6 +231,4 @@ const Register = (props) => {
   );
 };
 
-
-
-export default Register;
+export default Update;

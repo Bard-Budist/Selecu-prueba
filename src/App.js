@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import {
   Register,
-  Login
+  Login,
+  Update,
 } from "./views"
 import './App.css';
 
@@ -11,6 +12,7 @@ function App() {
       <Routes>
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/update" element={<Update />} />
       </Routes>
     </BrowserRouter>
   );
